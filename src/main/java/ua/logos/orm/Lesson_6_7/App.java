@@ -7,6 +7,12 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import entity.Comment;
 import entity.Post;
@@ -22,7 +28,7 @@ public class App {
 
 		 //addTags(em);
 		 //addPost(em);
-		// addComment(em);
+		//addComment(em);
 
 		// List<Comment> comments = em.createQuery("SELECT c FROM Comment c",
 		// Comment.class).getResultList(); //all from comment`s table
@@ -85,9 +91,101 @@ public class App {
 //		Post post = em.createQuery("SELECT p FROM Post p WHERE p.id = ?1", Post.class).setParameter(1, 5).getSingleResult();
 //		System.out.println(post);
 		
-		Post post = em.createQuery("SELECT p FROM Post p RIGHT JOIN FETCH p.product pp WHERE p.id = :id", Post.class).setParameter("id", 9).getSingleResult();
-		System.out.println(post);
-		System.out.println(post.getProduct());
+//		Post post = em.createQuery("SELECT p FROM Post p RIGHT JOIN FETCH p.product pp WHERE p.id = :id", Post.class).setParameter("id", 9).getSingleResult();
+//		System.out.println(post);
+//		System.out.println(post.getProduct());
+		
+		
+		//Criteria
+		
+		
+//		CriteriaBuilder cb = em.getCriteriaBuilder();
+//		CriteriaQuery<Post> query = cb.createQuery(Post.class);
+//		Root<Post> root = query.from(Post.class);   // FROM Post p
+//		query.select(root); //SELECT p FROM Post p
+		
+//		Expression<Integer> idExpression = root.get("id");  //id
+//		Predicate idPredicate = cb.greaterThan(idExpression, 85); //id>85
+//		query.where(idPredicate); // SELECT p FROM Post p WHERE id>85
+		
+//		Expression<Integer> idExpression = root.get("id");  //id
+//		Predicate idPredicateMin = cb.greaterThanOrEqualTo(idExpression, 40); //id>40
+//		Predicate idPredicateMax = cb.lessThan(idExpression, 60); //id<60
+//		Predicate allId = cb.and(idPredicateMin,idPredicateMax);
+//		query.where(allId); // SELECT p FROM Post p WHERE id>=40 && id<60
+		
+//		Join<Post, Product> postJoinProduct = root.join("product");
+//		Expression<BigDecimal> priceExpression = postJoinProduct.get("price");
+//		Predicate pricePredicate = cb.between(priceExpression, new BigDecimal(30.00), new BigDecimal(50.00));
+//		query.where(pricePredicate);
+		
+//		Expression<String> productNameExpression = postJoinProduct.get("name");
+//		Predicate productNamePredicate = cb.like(productNameExpression, "%4");
+//		query.where(productNamePredicate);
+		
+	
+//		Expression<String> productNameExpression = postJoinProduct.get("name");
+//		Expression<Integer> idExpression = root.get("id");
+//		Predicate idPredicateMin = cb.greaterThanOrEqualTo(idExpression, 10);
+//		Predicate productNamePredicate = cb.like(productNameExpression, "%4");
+//		Predicate c = cb.and(idPredicateMin,productNamePredicate);
+//		query.where(c);
+//		List<Post> posts = em.createQuery(query).getResultList();
+//		posts.forEach(p -> System.out.println(p));
+		
+//		1. всі з Coment
+//		2. всі з Product де id>80
+//		3. всі з Post через LIKE де title закінчується на 8 
+//		4. з Product 10-25
+//		5. Product 2,45,34,12,65
+		
+//		List<Comment> comments = em.createQuery("SELECT c FROM Comment c", Comment.class).getResultList(); 																				
+//		comments.forEach(c -> System.out.println(c));
+//
+//		List<Product> pr = em.createQuery("SELECT p FROM Product p WHERE p.id >:id", Product.class)
+//				.setParameter("id", 80).getResultList();
+//		pr.forEach(p -> System.out.println(p));
+//
+//		List<Post> posts2 = em.createQuery("SELECT p FROM Post p WHERE p.title LIKE :post_title", Post.class)
+//				.setParameter("post_title", "%8").getResultList();
+//
+//		posts2.forEach(p -> System.out.println(p));
+//
+//		List<Product> product = em
+//				.createQuery("SELECT p FROM Product p WHERE p.id BETWEEN " + ":first AND :last", Product.class)
+//				.setParameter("first", 10).setParameter("last", 25).getResultList();
+//		product.forEach(p -> System.out.println(p));
+//
+//		List<Product> pr2 = em.createQuery("SELECT p FROM Product p WHERE p.id IN (:ids)", Product.class)
+//				.setParameter("ids", Arrays.asList(2, 45, 34, 12, 65)).getResultList();
+//		pr2.forEach(p -> System.out.println(p));
+		
+//		1. всі з Coment
+//		2. всі з Product де id>80
+//		3. всі з Post через LIKE де title закінчується на 8 
+//		4. з Product 10-25
+//		5. Product 2,45,34,12,65
+//		Через Criteria
+		
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Comment> query = cb.createQuery(Comment.class);
+		Root<Comment> root = query.from(Comment.class);   
+		query.select(root); 
+		List<Comment> posts = em.createQuery(query).getResultList();
+		posts.forEach(p -> System.out.println(p));
+		
+		CriteriaQuery<Product> query1 = cb.createQuery(Product.class);
+		Root<Product> root1 = query1.from(Product.class);
+		Expression<Integer> idExpression = root1.get("id"); 
+		Predicate idPredicate = cb.greaterThan(idExpression, 80); 
+		query1.where(idPredicate); 
+		List<Product> pr = em.createQuery(query1).getResultList();
+		pr.forEach(p -> System.out.println(p));
+		
+		
+		
+		
+		
 		
 		em.getTransaction().commit();
 		em.close();
