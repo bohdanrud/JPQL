@@ -32,6 +32,38 @@ public class App
        Comment commentById =  em.createQuery("SELECT c FROM Comment c WHERE c.id = :id", Comment.class).setParameter("id", 40).getSingleResult();   //return comment with id = 40;
        System.out.println(commentById);
        
+       List<Post> posts = em.createQuery("SELECT p FROM Post p WHERE p.id > :post_id", Post.class).setParameter("post_id", 50).getResultList();
+       posts.forEach(p -> System.out.println(p));
+       
+       List<Post> posts1 = em.createQuery("SELECT p FROM Post p WHERE p.id IN (:ids)", Post.class).setParameter("ids", Arrays.asList(2,56,3,76,99,34)).getResultList();
+       posts1.forEach(p -> System.out.println(p));
+       
+       List<Post> posts2 = em.createQuery("SELECT p FROM Post p WHERE p.title LIKE :post_title", Post.class).setParameter("post_title", "%8").getResultList();   //8 on the end
+       posts2.forEach(p -> System.out.println(p));
+       
+       List<Post> posts3 = em.createQuery("SELECT p FROM Post p WHERE p.title LIKE :post_title", Post.class).setParameter("post_title", "%8_").getResultList();   //8 on the end
+       posts3.forEach(p -> System.out.println(p));
+       
+       List<Post> posts4 = em.createQuery("SELECT p FROM Post p WHERE p.id BETWEEN :first AND :last", Post.class).setParameter("first",76).setParameter("last", 82).getResultList();
+       posts4.forEach(p -> System.out.println(p));
+       
+       //Agreg functoin
+       
+       Long count = em.createQuery("SELECT count(c.id) FROM Comment c", Long.class).getSingleResult();
+       System.out.println("Count: " + count);
+       
+       Long sum = em.createQuery("SELECT sum(c.id) FROM Comment c", Long.class).getSingleResult();
+       System.out.println("Sum: " + sum);
+       
+       Double average = em.createQuery("SELECT avg(c.id) FROM Comment c", Double.class).getSingleResult();
+       System.out.println("Avarege: " + average);
+       
+       Integer max = em.createQuery("SELECT max(c.id) FROM Comment c", Integer.class).getSingleResult();
+       System.out.println("MAX: " + max);
+       
+       Integer min = em.createQuery("SELECT min(c.id) FROM Comment c", Integer.class).getSingleResult();
+       System.out.println("MIN: " + min);
+       
        em.getTransaction().commit();
        em.close();
        factory.close();
